@@ -1,9 +1,11 @@
 from rb_hadoop_connectivity import hadoop_connectivity
 
-# Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    #with-statement to connect to impala-server; no headaches with errors etc.
+    # as the with-statement handles connection-closing automatically
     with hadoop_connectivity.connection("rt-iplb-rbap.de.bosch.com",
                                         21050, "RB-AE-RTP2.BDPS.BOSCH-ORG.COM") as connection:
+        #query to send to database
         query_base = f"""
         select 
         COALESCE(location_result_uid,"") AS location_result_uid,
@@ -68,3 +70,9 @@ if __name__ == '__main__':
         and result_date >= to_timestamp('2023/08/01', 'yyyy/MM/dd')
         order by cast(process_number AS BIGINT), param_name
         """
+        # the function query_table_cursor returns a tuple containing the resulting df and its columns (df, df_columns)
+        query_result = hadoop_connectivity.query_table_cursor(connection, query_base)
+        df = query_result[0]
+        df_columns = query_result[1]
+
+        print(df.info())
