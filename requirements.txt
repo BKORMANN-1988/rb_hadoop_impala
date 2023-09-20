@@ -1,2 +1,4 @@
 pandas~=1.5.3
 jaydebeapi~=1.2.3
+winkerberos~=0.9.1
+requests-kerberos~=0.12.0
